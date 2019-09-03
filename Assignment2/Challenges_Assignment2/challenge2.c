@@ -14,7 +14,6 @@
 
 #define NUMBER_OF_POINTS 10000
 #define RANGE_OF_NUMBERS 10000
-#define PRECISION_VALUE  250
 
 //Point
 typedef struct {
@@ -22,22 +21,23 @@ typedef struct {
   int y;
 } Point;
 
-
-
 int generateMatrix(Point *empty_Matrix,int length);
 long double distancePoints(Point A, Point B);
 long traditionalClosestNeighbor(Point *matrix,int matrixLength);
 long personalClosestNeighbor(Point *matrix,int matrixLength);
 char* printPoint(Point);
+int test();
+int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int numberOfPointsVisited,double borderRadius,double targetRadius,char *visitedPointsArray);
 
 int main(int argc, char const *argv[]) {
 
-  int dimension = NUMBER_OF_POINTS/10;
-  Point points[dimension];
-  generateMatrix(&points[0], dimension);
-
-  printf("%lu\n", traditionalClosestNeighbor(&points[0],dimension));
-  printf("%lu\n", personalClosestNeighbor(&points[0],dimension));
+  // int dimension = NUMBER_OF_POINTS/10;
+  // Point points[dimension];
+  // generateMatrix(&points[0], dimension);
+  //
+  // printf("%lu\n", traditionalClosestNeighbor(&points[0],dimension));
+  // printf("%lu\n", personalClosestNeighbor(&points[0],dimension));
+  test();
 
   return 0;
 }
@@ -102,30 +102,40 @@ long traditionalClosestNeighbor(Point *matrix,int matrixLength){
   return numberOfOperations;
 }
 
-long personalClosestNeighbor(Point *matrix,int matrixLength){
-  long numberOfOperations = 0;
-  long double distance;
-  int closestNeighbor;
-  long double closestDistance;
-  //char checkedlist
-  for(int pivotPoint=0;pivotPoint<matrixLength;pivotPoint++){
-    closestDistance=100000;
-    for(int farPoint=0;farPoint<matrixLength;farPoint++){
-      numberOfOperations++;
-      if(pivotPoint!=farPoint){
-        distance = distancePoints(matrix[pivotPoint],matrix[farPoint]);
-        if(distance<=PRECISION_VALUE){
-          closestNeighbor=farPoint;
-          break;
-        }
-        if(distance<closestDistance){
-          closestDistance=distance;
-          closestNeighbor=farPoint;
-        }
-      }
+int findingNextPivotPoint(char *visitedPointsArray,int length){
+  for(int i=0;i<length;i++){
+    if(visitedPointsArray[i]==0){
+      return i;
     }
   }
-  return numberOfOperations;
+  return -1;
+}
+
+long personalClosestNeighbor(Point *matrix,int matrixLength){
+  double borderRadius = RANGE_OF_NUMBERS*4/10;
+  double targetRadius = RANGE_OF_NUMBERS*3/10;
+  char visited[NUMBER_OF_POINTS];
+  int numberOfPointsVisited = 0;
+  int pivotPoint=0;
+  while(numberOfPointsVisited<NUMBER_OF_POINTS && pivotPoint>-1){
+
+  }
+
+
+  return 0;
+}
+
+int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int numberOfPointsVisited,double borderRadius,double targetRadius,char *visitedPointsArray){
+  int numberOfClosePoints=0;
+
+}
+
+int test(){
+  char visited[NUMBER_OF_POINTS];
+  for(int i=0;i<10;i++){
+    printf("%d\n",visited[i]);
+  }
+  return 0;
 }
 
 /**
