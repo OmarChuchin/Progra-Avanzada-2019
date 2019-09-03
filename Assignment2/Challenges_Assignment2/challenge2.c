@@ -27,7 +27,7 @@ long traditionalClosestNeighbor(Point *matrix,int matrixLength);
 long personalClosestNeighbor(Point *matrix,int matrixLength);
 char* printPoint(Point);
 int test();
-int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int numberOfPointsVisited,double borderRadius,double targetRadius,char *visitedPointsArray);
+int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int *numberOfPointsVisited,double borderRadius,double targetRadius,char *visitedPointsArray);
 
 int main(int argc, char const *argv[]) {
 
@@ -102,6 +102,13 @@ long traditionalClosestNeighbor(Point *matrix,int matrixLength){
   return numberOfOperations;
 }
 
+long double calculateAbsLongestDistance(){
+  Point a,b;
+  a.x=0;a.y=0;
+  b.x=RANGE_OF_NUMBERS;b.y=RANGE_OF_NUMBERS;
+  return distancePoints(a,b);
+}
+
 int findingNextPivotPoint(char *visitedPointsArray,int length){
   for(int i=0;i<length;i++){
     if(visitedPointsArray[i]==0){
@@ -112,22 +119,80 @@ int findingNextPivotPoint(char *visitedPointsArray,int length){
 }
 
 long personalClosestNeighbor(Point *matrix,int matrixLength){
-  double borderRadius = RANGE_OF_NUMBERS*4/10;
-  double targetRadius = RANGE_OF_NUMBERS*3/10;
+  double borderRadius = calculateAbsLongestDistance()*4/10;
+  double targetRadius = calculateAbsLongestDistance()*3/10;
   char visited[NUMBER_OF_POINTS];
   int numberOfPointsVisited = 0;
   int pivotPoint=0;
   while(numberOfPointsVisited<NUMBER_OF_POINTS && pivotPoint>-1){
-
+    findingNearestNeighbor(&matrix[0],matrixLength,pivotPoint,&numberOfPointsVisited,borderRadius,targetRadius,&visited[0]);
+    pivotPoint=findingNextPivotPoint(&visited[0],matrixLength);
   }
 
 
   return 0;
 }
 
-int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int numberOfPointsVisited,double borderRadius,double targetRadius,char *visitedPointsArray){
-  int numberOfClosePoints=0;
+int generateIndexMatrix(int *matrix,int length){
+  for(int i=0;i<length;i++){
+    matrix[i]=-1;
+  }
+  return 0;
+}
 
+int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int *numberOfPointsVisited,double borderRadius,double targetRadius,char *visitedPointsArray){
+  int numberOfClosePoints=0,numberOfNotSoClosePoints=0;
+  long double distance=100000000000,newDistance;
+  int closestPointIndex = -1;
+  int closePointsIndexes[matrixLength],notSoClosePointsIndexes[matrixLength];
+  generateIndexMatrix(&closePointsIndexes[0],matrixLength);
+  generateIndexMatrix(&notSoClosePointsIndexes[0],matrixLength);
+  closePointsIndexes[numberOfClosePoints]=pivotPoint;
+  numberOfClosePoints++;
+  /**
+  *Checking for the closest Neigbor of the pivot Point, while recording which points are in the near vecinity
+  *For further inspection in the next for loop.
+  */
+  for(int i=0;i<matrixLength;i++){
+    if(i!=pivotPoint){
+      newDistance=distancePoints(matrix[pivotPoint],matrix[i]);
+      if(newDistance<distance){
+        distance=newDistance;
+        closestPointIndex=i;
+      }
+      if(newDistance<borderRadius){
+        if(newDistance<targetRadius){
+          //Meter dentro del array de puntos a checar.
+          closePointsIndexes[numberOfClosePoints]=i;
+          numberOfClosePoints++;
+        }
+        else{
+          //Meter dentro del array de puntos frontera que no se deben checar
+          notSoClosePointsIndexes[numberOfNotSoClosePoints]=i;
+          numberOfNotSoClosePoints++;
+        }
+      }
+    }
+  }
+
+  visitedPointsArray[pivotPoint]++;
+  pivotPoint=findingNextPivotPoint(visitedPointsArray,matrixLength);
+
+  /**
+  *Now that the point of the near vecinity have been identified we can proceed with the checking of said points.
+  */
+  //This if is used in the not so probable case that all of the points are closed together, causing the algorithm to go O(n^2), again. Thus slowing it down.
+  if(numberOfClosePoints+numberOfNotSoClosePoints>=matrixLength){
+    double newBorderRadius = borderRadius*4/10;
+    double newTargetRadius = targetRadius*3/10;
+    findingNearestNeighbor(matrix,matrixLength,pivotPoint,numberOfPointsVisited,newBorderRadius,newTargetRadius,visitedPointsArray);
+  }
+  //From here on what we will be checking are the point of the near vecinity of the original pivotPoint
+  else{
+
+  }
+
+  return 0;
 }
 
 int test(){
