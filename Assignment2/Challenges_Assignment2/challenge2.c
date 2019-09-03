@@ -14,6 +14,7 @@
 
 #define NUMBER_OF_POINTS 10000
 #define RANGE_OF_NUMBERS 10000
+#define ABSURD_DISTANCE  100000
 
 //Point
 typedef struct {
@@ -87,7 +88,7 @@ long traditionalClosestNeighbor(Point *matrix,int matrixLength){
   long double distance;
 
   for(int pivotPoint=0;pivotPoint<matrixLength;pivotPoint++){
-    closestDistance = 1000000000000;
+    closestDistance = ABSURD_DISTANCE;
     for(int farPoint=0;farPoint<matrixLength;farPoint++){
       if(pivotPoint!=farPoint){
         distance = distancePoints(matrix[pivotPoint],matrix[farPoint]);
@@ -102,6 +103,7 @@ long traditionalClosestNeighbor(Point *matrix,int matrixLength){
   return numberOfOperations;
 }
 
+//Calculates the maximum distance possible in this model, to know where to mark the border and target radius.
 long double calculateAbsLongestDistance(){
   Point a,b;
   a.x=0;a.y=0;
@@ -133,20 +135,11 @@ long personalClosestNeighbor(Point *matrix,int matrixLength){
   return 0;
 }
 
-int generateIndexMatrix(int *matrix,int length){
-  for(int i=0;i<length;i++){
-    matrix[i]=-1;
-  }
-  return 0;
-}
-
 int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int *numberOfPointsVisited,double borderRadius,double targetRadius,char *visitedPointsArray){
   int numberOfClosePoints=0,numberOfNotSoClosePoints=0;
-  long double distance=100000000000,newDistance;
+  long double distance=ABSURD_DISTANCE,newDistance;
   int closestPointIndex = -1;
   int closePointsIndexes[matrixLength],notSoClosePointsIndexes[matrixLength];
-  generateIndexMatrix(&closePointsIndexes[0],matrixLength);
-  generateIndexMatrix(&notSoClosePointsIndexes[0],matrixLength);
   closePointsIndexes[numberOfClosePoints]=pivotPoint;
   numberOfClosePoints++;
   /**
@@ -176,8 +169,6 @@ int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int *nu
   }
 
   visitedPointsArray[pivotPoint]++;
-  pivotPoint=findingNextPivotPoint(visitedPointsArray,matrixLength);
-
   /**
   *Now that the point of the near vecinity have been identified we can proceed with the checking of said points.
   */
@@ -189,7 +180,33 @@ int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int *nu
   }
   //From here on what we will be checking are the point of the near vecinity of the original pivotPoint
   else{
-
+    Point pivot;
+    //Starts in one cause the first element was the original pivot and we know we already found its closest Neigbor
+    for(int i=1;i<numberOfClosePoints;i++){
+      distance=ABSURD_DISTANCE;
+      if(visitedPointsArray[closePointsIndexes[i]]<1){ //If that point is still not checked
+        pivot=matrix[closePointsIndexes[i]];
+        //First we check the points that are possibly closest to the pivot.
+        for(int j=0;j<numberOfClosePoints;j++){
+          if(j!=i){ //they are not the same point
+            newDistance=distancePoints(pivot,matrix[closePointsIndexes[j]]);
+            if(newDistance<distance){
+              closestPointIndex=closePointsIndexes[j];
+              distance=newDistance;
+            }
+          }
+        }
+        //Now we check the points that are near the border just in case, there is a minor possibility but higher than 0.
+        for(int j=0;numberOfNotSoClosePoints>j;j++){
+          newDistance=distancePoints(pivot,matrix[notSoClosePointsIndexes[j]]);
+          if(newDistance<distance){
+            closestPointIndex=notSoClosePointsIndexes[j];
+            distance=newDistance;
+          }
+        }
+        visitedPointsArray[closePointsIndexes[i]]++;//Mark that point as visited
+      }
+    }
   }
 
   return 0;
