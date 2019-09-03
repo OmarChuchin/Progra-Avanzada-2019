@@ -12,8 +12,8 @@
 *
 */
 
-#define NUMBER_OF_POINTS 10000
-#define RANGE_OF_NUMBERS 10000
+#define NUMBER_OF_POINTS 100000
+#define RANGE_OF_NUMBERS 100000
 #define ABSURD_DISTANCE  100000
 
 //Point
@@ -32,13 +32,24 @@ int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int *nu
 
 int main(int argc, char const *argv[]) {
 
-  // int dimension = NUMBER_OF_POINTS/10;
-  // Point points[dimension];
-  // generateMatrix(&points[0], dimension);
-  //
+  //int dimension = NUMBER_OF_POINTS/10;
+  Point points[NUMBER_OF_POINTS];
+  generateMatrix(&points[0], NUMBER_OF_POINTS);
+
+  clock_t begin = clock();
+  traditionalClosestNeighbor(&points[0],NUMBER_OF_POINTS);
+  clock_t end = clock();
+  double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+  printf("The time spent by the traditional algorithm was %f\n", time_spent);
+
+  begin = clock();
+  personalClosestNeighbor(&points[0],NUMBER_OF_POINTS);
+  end = clock();
+  time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+  printf("The time spent by the optimized algorithm was %f\n", time_spent);
+
   // printf("%lu\n", traditionalClosestNeighbor(&points[0],dimension));
   // printf("%lu\n", personalClosestNeighbor(&points[0],dimension));
-  test();
 
   return 0;
 }
@@ -111,6 +122,7 @@ long double calculateAbsLongestDistance(){
   return distancePoints(a,b);
 }
 
+//Helps the functions below to find the next pivot, the next point that needs to be checked.
 int findingNextPivotPoint(char *visitedPointsArray,int length){
   for(int i=0;i<length;i++){
     if(visitedPointsArray[i]==0){
@@ -120,6 +132,12 @@ int findingNextPivotPoint(char *visitedPointsArray,int length){
   return -1;
 }
 
+/*
+My own version of the search for the closest neighbor algorithm.
+Basically it looks for the closest neighbor in all the matrix for some points.
+While doing so it classfies the other points by distance, creating regions with different radius around that pivot point.
+Then checks all the points within that region cause probability says that the nearest neighbor of that point should be within the same region.
+*/
 long personalClosestNeighbor(Point *matrix,int matrixLength){
   double borderRadius = calculateAbsLongestDistance()*4/10;
   double targetRadius = calculateAbsLongestDistance()*3/10;
@@ -130,11 +148,13 @@ long personalClosestNeighbor(Point *matrix,int matrixLength){
     findingNearestNeighbor(&matrix[0],matrixLength,pivotPoint,&numberOfPointsVisited,borderRadius,targetRadius,&visited[0]);
     pivotPoint=findingNextPivotPoint(&visited[0],matrixLength);
   }
-
-
   return 0;
 }
 
+/*
+The actual function that divides into regions and searches,
+I decided to make it this way so recursion is easier to handle.
+*/
 int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int *numberOfPointsVisited,double borderRadius,double targetRadius,char *visitedPointsArray){
   int numberOfClosePoints=0,numberOfNotSoClosePoints=0;
   long double distance=ABSURD_DISTANCE,newDistance;
@@ -172,7 +192,7 @@ int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int *nu
   /**
   *Now that the point of the near vecinity have been identified we can proceed with the checking of said points.
   */
-  //This if is used in the not so probable case that all of the points are closed together, causing the algorithm to go O(n^2), again. Thus slowing it down.
+  //This "if" is used in the not so probable case that all of the points are closed together, causing the algorithm to go O(n^2), again. Thus slowing it down.
   if(numberOfClosePoints+numberOfNotSoClosePoints>=matrixLength){
     double newBorderRadius = borderRadius*4/10;
     double newTargetRadius = targetRadius*3/10;
@@ -204,18 +224,11 @@ int findingNearestNeighbor(Point *matrix,int matrixLength,int pivotPoint,int *nu
             distance=newDistance;
           }
         }
-        visitedPointsArray[closePointsIndexes[i]]++;//Mark that point as visited
+        if(closestPointIndex>-1){//If a neighbor was found in that region. (weird scenario but could happen)
+          visitedPointsArray[closePointsIndexes[i]]++;//Mark that point as visited
+        }
       }
     }
-  }
-
-  return 0;
-}
-
-int test(){
-  char visited[NUMBER_OF_POINTS];
-  for(int i=0;i<10;i++){
-    printf("%d\n",visited[i]);
   }
   return 0;
 }
