@@ -55,7 +55,7 @@ int main(int argc, char const *argv[]) {
   time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
   printf("The time spent by the optimized algorithm was %f\n", time_spent);
 
-  for(int i=0;i<5;i++){
+  for(int i=0;i<NUMBER_OF_POINTS/4;i++){
     printf("before test %d,%d\n",resultTraditional[i],resultOptimized[i]);
   }
 
