@@ -2,7 +2,7 @@
 
 int maxim(int a,int b,int c);
 int mini(int a,int b,int c);
-int foreverAlone(int *array,int max,int min);
+int median(int a,int b,int c);
 
 int main(int argc, char const *argv[]) {
   int a,b,c;
@@ -10,11 +10,9 @@ int main(int argc, char const *argv[]) {
   scanf("%d\n", &b);
   scanf("%d",   &c);
 
-  int arr[3]= {a,b,c};
-
   int max = maxim(a,b,c);
   int min = mini(a,b,c);
-  int midd = foreverAlone(&arr[0],max,min);
+  int midd = median(a,b,c);
 
   int diff = max-min;
   diff/=2;
@@ -25,6 +23,16 @@ int main(int argc, char const *argv[]) {
     printf("%s\n", "false");
   }
   return 0;
+}
+
+int median(int a,int b,int c){
+  if(a<b && b<c){
+    return b;
+  }
+  if(a>b){
+    return median(b,a,c);
+  }
+  return median(a,c,b);
 }
 
 int maxim(int a,int b,int c){
@@ -47,13 +55,4 @@ int mini(int a,int b,int c){
     result=c;
   }
   return result;
-}
-
-int foreverAlone(int *array,int max,int min){
-  for(int i=0;i<3;i++){
-    if(array[i]!=max && array[i]!=min){
-      return array[i];
-    }
-  }
-  return -1;
 }
