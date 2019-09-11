@@ -14,9 +14,8 @@ int main(int argc, char const *argv[]) {
   int min = mini(a,b,c);
   int midd = median(a,b,c);
 
-  int diff = max-min;
-  diff/=2;
-  if((min+diff)==midd){
+  int diff = max-midd;
+  if((midd-diff)==min){
     printf("%s\n", "true");
   }
   else{
@@ -26,7 +25,7 @@ int main(int argc, char const *argv[]) {
 }
 
 int median(int a,int b,int c){
-  if(a<b && b<c){
+  if(a<=b && b<=c){
     return b;
   }
   if(a>b){

@@ -1,9 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char const *argv[]) {
   int number;
   scanf("%d", &number);
 
+  number = abs(number);
+  if(number<10){
+    printf("%d\n", 1);
+    return 0;
+  }
   int max=1;
   int boolean= number%(max*10);
   while(boolean!=number){

@@ -8,7 +8,7 @@ int main(int argc, char const *argv[]) {
 
   printf("Perfect numbers up to %d:", top);
 
-  for(int i=0;i<top;i++){
+  for(int i=0;i<=top;i++){
     if(isPerfect(i)){
       notFoundOne = 0;
       printf(" %d", i);
