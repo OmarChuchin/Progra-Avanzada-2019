@@ -1,5 +1,5 @@
 #include <stdio.h>
-#define SIZE 100
+#define SIZE 255
 
 int bubbleSort(int* arr,int arraySize){
   for(int i=arraySize;i>0;i--){
@@ -15,26 +15,30 @@ int bubbleSort(int* arr,int arraySize){
 }
 
 unsigned char binarySearch(int* arr,int arraySize,int objective){
+  //Sort the array
   bubbleSort(arr,arraySize);
-  char a = 0, z=arraySize-1;
+  char a = 0, z=arraySize-1; //first and last valid index
+  //If it is on the first index
   if(arr[a]==objective){
     return a;
   }
+  //or the last
   if(arr[z]==objective){
     return z;
   }
-  int middle = (a+z)/2, boolean = 1;
+
+  int middle = z/2, boolean = 1;
   while(middle>a && middle<z && boolean){
-    middle = (a+z)/2;
     if(arr[middle]==objective){
       boolean = 0;
     }
-    else if(objective>middle){
+    else if(objective>arr[middle]){
       a=middle;
     }
     else{
       z=middle;
     }
+    middle = (a+z)/2;
   }
   return middle;
 }

@@ -14,12 +14,12 @@ int isPrime(int* primes,int size,unsigned int objective){
 
 unsigned int sieve(int* arr,unsigned int top){
   unsigned int size = 1;
-  unsigned char boolean = 0;
+  unsigned char boolean = 1;
 
   for(int i=0;i<size && boolean == 0;i++){
     if(top<arr[i]) {
       size = i+1;
-      boolean=1;
+      boolean=0;
     }
   }
 
@@ -44,7 +44,7 @@ int main(int argc, char const *argv[]) {
 
   int arraySize = sieve(&array[0], top);
 
-  for(int i=1;i<arraySize;i++){
+  for(int i=0;i<arraySize;i++){
     printf("%u\n", array[i]);
   }
   return 0;
