@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-enum MinutiaType = {Ending,Bifurcation,Unknown};
+enum MinutiaType {Ending,Bifurcation,Unknown};
 
 typedef struct minut
 {
@@ -12,6 +12,6 @@ typedef struct minut
 
 
 int main(int argc, char const *argv[]){
-    /* code */
+    printf("fuck off\n");
     return 0;
 }
