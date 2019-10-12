@@ -2,13 +2,25 @@
 #include <stdlib.h>
 
 #define NUMBER_OF_POINTS 100
-#define LIMMIT_OF_NUMBERS 100
+#define LIMIT_OF_NUMBERS 10000
+#define LENGTH_OF_PRINT_ROW 20
 
+//section for orders
 char ascendingCompare(int a,int b);
 char descendingCompare(int a,int b);
-void bubbleSort(int* array,unsigned int* arraySize,char (*orderPtr)(int,int));
-void generateRandomArray(int* array,unsigned int* arraySize);
-void printArray(int* array, unsigned int* arraySize);
+
+//section specific for Arrays
+void bubbleSort(int* const array,const unsigned int* const arraySize,char (*orderPtr)(int,int));
+void generateRandomArray(int* const array,const unsigned int* const arraySize);
+void printArray(const int* const array, const unsigned int* const arraySize);
+
+
+//tests space
+char testAscendingInt(const int* const array,const unsigned int* const arraySize);
+char testDescendingInt(const int* const array,const unsigned int* const arraySize);
+char testMutableInt(const int* const array,const unsigned int* const arraySize, char (*orderPtr)(int,int));
+
+
 
 int main(int argc, char const *argv[]){
     
@@ -29,8 +41,12 @@ int main(int argc, char const *argv[]){
     printf("\nArray after sorting in Ascending Order\n");
     bubbleSort(&array[0],&numberOfPoints,ascendingCompare);
     printArray(&array[0],&numberOfPoints);
+    printf("Is the array ordered? : %d\n",testAscendingInt(&array[0],&numberOfPoints));
+    printf("Is the array ordered? : %d\n",testMutableInt(&array[0],&numberOfPoints,ascendingCompare));
+
 
     //--------------------------End of sort in ascending order---------------------------------------
+
 
     //Pause to check the info before going to second sorting round.
     char Continue;
@@ -40,18 +56,18 @@ int main(int argc, char const *argv[]){
 
 
     //------------------------Sorting now in descending order----------------------------------------
-    printf("Resetting array...\n");
+    printf("\nResetting array...\n");
     generateRandomArray(&array[0],&numberOfPoints);
     printf("New Random array\n");
     printArray(&array[0],&numberOfPoints);
 
-    printf("Array after sorting in descending order\n");
+    printf("\n\nArray after sorting in Descending order\n");
     bubbleSort(&array[0],&numberOfPoints,descendingCompare);
     printArray(&array[0],&numberOfPoints);
-    //--------------------------End of sort in descending order---------------------------------------
+    printf("Is the array ordered? : %d\n",testDescendingInt(&array[0],&numberOfPoints));
+    printf("Is the array ordered? : %d\n",testMutableInt(&array[0],&numberOfPoints,descendingCompare));
 
-    printf("I am done... :)");
-    
+    //--------------------------End of sort in descending order---------------------------------------    
     return 0;
 }
 
@@ -79,9 +95,8 @@ char descendingCompare(int a, int b){
     
 }
 
-void bubbleSort(int* array,unsigned int* arraySize,char (*orderPtr)(int,int)){
-    printf("I got up to here!");
-    for (int i = *arraySize-1; i > 1; i++){
+void bubbleSort(int* const array,const unsigned int* const arraySize,char (*orderPtr)(int,int)){
+    for (int i = *arraySize-1; i > 1; i--){
         for (int j = 0; j < i; j++){
             if((*orderPtr)(array[j],array[j+1])==1){
                 int temp = array[j];
@@ -92,19 +107,19 @@ void bubbleSort(int* array,unsigned int* arraySize,char (*orderPtr)(int,int)){
     }    
 }
 
-void generateRandomArray(int* array,unsigned int* arraySize){
+void generateRandomArray(int* const array,const unsigned int* const arraySize){
 
     for (int  i = 0; i < *arraySize; i++)
     {
-        array[i] = rand() % LIMMIT_OF_NUMBERS;
+        array[i] = rand() % LIMIT_OF_NUMBERS;
     }
     
 }
 
-void printArray(int* array,unsigned int* arraySize){
+void printArray(const int* const array, const unsigned int* const arraySize){
     printf("[");
     for (int i = 0; i < *arraySize; i++){
-        if(i>0 && i<*arraySize-1 && i%20==0){
+        if(i>0 && i<*arraySize-1 && i%(LENGTH_OF_PRINT_ROW)==0){
             printf("\n");
         }
         printf("%d",array[i]);
@@ -113,4 +128,31 @@ void printArray(int* array,unsigned int* arraySize){
         }
     }
     printf("]\n");    
+}
+
+char testAscendingInt(const int* const array,const unsigned int* const arraySize){
+    for(unsigned int i = 0; i<*arraySize -1 ; i++){
+        if(array[i+1]<array[i]){
+            return -1;
+        }
+    }
+    return 1;
+}
+
+char testDescendingInt(const int* const array,const unsigned int* const arraySize){
+    for(unsigned int i = 0; i<*arraySize -1 ; i++){
+        if(array[i+1]>array[i]){
+            return -1;
+        }
+    }
+    return 1;
+}
+
+char testMutableInt(const int* const array,const unsigned int* const arraySize, char (*orderPtr)(int,int)){
+    for (unsigned int i = 0; i < *arraySize-1 ; i++){
+        if((orderPtr)(array[i],array[i+1])==1){
+            return -1;
+        }
+    }
+    return 1;
 }
