@@ -11,7 +11,7 @@ double slope(const Point* const a,const Point* const b){
     int down = (b->x - a->x);
 
     if(down==0){
-        return 0;
+        return 0.0;
     }
 
     return (b->y - a->y)/down;
