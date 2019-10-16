@@ -7,12 +7,15 @@ typedef struct{
 } Point;
 
 double slope(const Point* const a,const Point* const b){
-    int down = (b->x - a->x);
-    if(down == 0){
-        return 0.0;
-    }
-    const double result = (b->y - a->y)/down;
-    return result;
+
+    double down = (b->x - a->x);
+    double up = (b->y - a->y);
+
+    // if(down==0){
+    //     return 0.0;
+    // }
+
+    return up/down;
 }
 
 char areCollinear(const Point* const a,const Point* const b,const Point* const c){

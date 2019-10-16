@@ -6,7 +6,7 @@ typedef struct {
 	int denominator;
 } Fraction;
 
-Fraction* simplifyFraction(const Fraction* const frac) {
+void simplify(Fraction* const frac) {
 	int up = frac->numerator, down = frac->denominator;
 	int factor = down;
 	while (factor > 1) {
@@ -19,10 +19,8 @@ Fraction* simplifyFraction(const Fraction* const frac) {
 			factor--;
 		}
 	}
-	Fraction* result = malloc(sizeof(Fraction));
-	result->numerator = up;
-	result->denominator = down;
-	return result;
+	frac->numerator = up;
+	frac->denominator = down;
 }
 
 void printFraction(const Fraction* const frac) {
@@ -30,17 +28,17 @@ void printFraction(const Fraction* const frac) {
 	printf("%d\n", frac->denominator);
 }
 
-int main(){
+int main()
+{
 	Fraction* const fraction = malloc(sizeof(Fraction));
 	scanf("%d", &fraction->numerator);
 	scanf("%d", &fraction->denominator);
 
-	Fraction* const result = simplifyFraction(fraction);
+	simplify(fraction);
+
+	printFraction(fraction);
+
 	free(fraction);
-
-	printFraction(result);
-
-	free(result);
 
 	return 0;
 }

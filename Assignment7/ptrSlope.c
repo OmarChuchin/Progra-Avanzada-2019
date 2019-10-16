@@ -8,13 +8,14 @@ typedef struct {
 
 double slope(const Point* const a,const Point* const b){
 
-    int down = (b->x - a->x);
+    double down = (b->x - a->x);
+    double up = (b->y - a->y);
 
-    if(down==0){
-        return 0.0;
-    }
+    // if(down==0){
+    //     return 0.0;
+    // }
 
-    return (b->y - a->y)/down;
+    return up/down;
 }
 
 int main(int argc, char const *argv[]){

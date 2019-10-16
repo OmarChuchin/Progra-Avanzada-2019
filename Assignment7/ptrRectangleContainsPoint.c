@@ -13,20 +13,21 @@ typedef struct {
 } Rectangle;
 
 char withinRectangle(const Rectangle* const r,const Point* const p){
-    Point* const limit = malloc(sizeof(Point));
-    // printf("\n");
-    limit->x = r->origin->x + r->width;
-    // printf("x: values: %d,%d\n",r->origin->x,limit->x);
-    limit->y = r->origin->y + r->height;
-    // printf("y: values %d,%d\n",limit->y,r->origin->y);
+    Point limit;
+    limit.x = r->origin->x + r->width;
+    limit.y = r->origin->y + r->height;
     char result = 0;
 
-    if(limit->x >= p->x && p->x >= r->origin->x && limit->y >= p->y && p->y >= r->origin->y){
+    if(limit.x >= p->x && p->x >= r->origin->x && limit.y >= p->y && p->y >= r->origin->y){
         result++;
     }
     
-    free(limit);
     return result;
+}
+
+void freeRectangle(Rectangle* const r){
+    free(r->origin);
+    free(r);
 }
 
 int main(void){
@@ -50,8 +51,7 @@ int main(void){
     printf("%u\n",withinRectangle(figure,a));
 
     free(a);
-    free(figure->origin);
-    free(figure);
+    freeRectangle(figure);
 
     return 0;
 }
