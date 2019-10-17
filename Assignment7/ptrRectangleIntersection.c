@@ -71,7 +71,7 @@ int main(void){
     freeRectangle(r1);
     freeRectangle(r2);
 
-    printf("\nEl resultado es\n");
+    // printf("\nEl resultado es\n");
     printRectangle(result);
     freeRectangle(result);
 
