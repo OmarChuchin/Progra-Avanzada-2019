@@ -1,21 +1,10 @@
-#include "test.h"
+#include "exam.h"
 
 /*
-Since we are using math.h in this code,
+Since we are usingl math.h in this code,
 the compilation should be like this
 gcc exam.c -o result -lm
 */
-
-double computeDistance(const Minutia* const ptrMA, const Minutia* const ptrMB){
-    double result = 0.0;
-
-    double xAxis = ptrMA->x - ptrMB->x;
-    xAxis *= xAxis;
-    double yAxis = ptrMA->y - ptrMB->y;
-    yAxis *= yAxis;
-
-    return sqrt(xAxis + yAxis);
-}
 
 int main(void){
 
@@ -35,30 +24,30 @@ Minutia* createMinutia(unsigned short x,unsigned short y,float angle,enum Minuti
 
 MinutiaArray* createMinutiaArray(unsigned short size){
     MinutiaArray* result = malloc(sizeof(MinutiaArray));
+    Minutia** array = malloc(sizeof(Minutia*)*size);
     result->length = size;
-    Minutia* array = malloc(sizeof(Minutia)*size);
-    // Minutia* array = calloc(size,sizeof(Minutia));
     for(unsigned short i = 0; i<size; i++){
-        array[i].x = 0;
-        array[i].y = 0;
-        array[i].angle = 0;
-        array[i].type = 0;
+        array[i] = createMinutia(0,0,0.0,0);
     }
     result->minutiae = array;
     return result;
 }
 
-int testFindCentroid(){
+char testFindCentroid(){
     MinutiaArray* array = createMinutiaArray(TEST_ARRAY_SIZE);
 
-    for(unsigned short i = 1; i < array->length ; i++){
-        array->minutiae[i].x       =   i;
-        array->minutiae[i].y       =   i;
-        array->minutiae[i].angle   =   i*1.1;
+    for(unsigned short i = 0; i < array->length ; i++){
+        array->minutiae[i]->x       =   i;
+        array->minutiae[i]->y       =   i;
+        array->minutiae[i]->angle   =   i*1.1;
         //Just a quick reminder 
         //MinutiaType {Ending,Bifurcation,Unknown} 
-        array->minutiae[i].type    =   Unknown;
+        array->minutiae[i]->type    =   Unknown;
     }
+
+    // for(unsigned short i = 0; i<array->length ; i++){
+    //     printMinutia(array->minutiae[i]);
+    // }
 
     unsigned int middle = TEST_ARRAY_SIZE/2;
 
@@ -67,16 +56,14 @@ int testFindCentroid(){
         middle--;
     }
 
-    Minutia* firstMinutia = &array->minutiae[middle]; // right in the middle because the points (x,y) follow the equation f(x) = x
-    //therefore the point in the middle of the array is the one with the smallest accumulated distance
+    Minutia* firstMinutia = array->minutiae[middle]; // right in the middle because the points (x,y) follow the equation f(x) = x
 
     Minutia* centroid = findCentroid(array,computeDistance);
 
-    // prints the values of the minutia found to be supposed the same
-    // printMinutia(firstMinutia);
-    // printMinutia(centroid);
+    printMinutia(firstMinutia);
+    printMinutia(centroid);
 
-    int result = 0;
+    char result = 0;
 
     if(firstMinutia == centroid){
         result++;
@@ -109,14 +96,23 @@ int printMinutia(const Minutia* const minutia){
     return 0;
 }
 
+double computeDistance(const Minutia* const ptrMA, const Minutia* const ptrMB){
+    double result = 0.0;
+
+    double xAxis = ptrMA->x - ptrMB->x;
+    xAxis *= xAxis;
+    double yAxis = ptrMA->y - ptrMB->y;
+    yAxis *= yAxis;
+
+    return sqrt(xAxis + yAxis);
+}
+
 void releaseMinutiaArray(MinutiaArray* array){
-    // for(unsigned short i = array->length -1 ; i>0 ; i--){
-    //     // printMinutia(array->minutiae[i]);
-    //     free(array->minutiae[i]);
-    // }
-    // free(array->minutiae[0]);
-    // free(array->minutiae);
-    // free(array);
+    for(unsigned short i = array->length -1 ; i>0 ; i--){
+        // printMinutia(array->minutiae[i]);
+        free(array->minutiae[i]);
+    }
+    free(array->minutiae[0]);
     free(array->minutiae);
     free(array);
 }
@@ -128,7 +124,7 @@ Minutia* findCentroid(const MinutiaArray* const array, double (*computeDistance)
         double accumulatedDistance = 0;
         for(unsigned short j=0 ; j < array->length ; j++){
             if(j!=i){
-                accumulatedDistance += computeDistance(&array->minutiae[i],&array->minutiae[j]);
+                accumulatedDistance += computeDistance(array->minutiae[i],array->minutiae[j]);
             }
         }
         if(accumulatedDistance < centroidDistance){
@@ -139,5 +135,5 @@ Minutia* findCentroid(const MinutiaArray* const array, double (*computeDistance)
         }
     }
 
-    return &array->minutiae[centroid];
+    return array->minutiae[centroid];
 }

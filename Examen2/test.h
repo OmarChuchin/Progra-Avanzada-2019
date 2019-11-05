@@ -5,7 +5,7 @@
 enum MinutiaType {Ending,Bifurcation,Unknown};
 
 #define RANDOM_NUMBER_LIMIT 100
-#define TEST_ARRAY_SIZE 150
+#define TEST_ARRAY_SIZE 10
 
 /**
  * Structure of a minutia
@@ -22,7 +22,7 @@ typedef struct{
  */ 
 typedef struct {
     unsigned short length;
-    Minutia** minutiae;
+    Minutia* minutiae;
 } MinutiaArray;
 
 /**
@@ -53,12 +53,6 @@ void releaseMinutiaArray(MinutiaArray* array);
 char compareMinutia(const Minutia* const minutiaA, const Minutia* const minutiaB);
 
 /**
- * The header of the function which after implementation will decide how to calculate the distance between 
- * two Minutia structures
- */
-double computeDistance(const Minutia* const ptrMA, const Minutia* const ptrMB);
-
-/**
  * Function which returns the pointer to a Minutia within the MinutiaArray -> array which using the function of computeDistance
  * will decide it's the relative center of the group of Minutia.
  */
@@ -67,4 +61,6 @@ Minutia* findCentroid(const MinutiaArray* const array, double (*computeDistance)
 /**
  * A function implemented to automatize if the function findCentroid is working properly.
  */
-char testFindCentroid();
+int testFindCentroid();
+
+double computeDistance(const Minutia* const ptrMA, const Minutia* const ptrMB);

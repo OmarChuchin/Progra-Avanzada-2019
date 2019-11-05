@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define infinity !0
+#define dInfinity 0xFFFFFFFFFFFFFFFF
 
 typedef struct {
     int x;

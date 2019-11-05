@@ -1,4 +1,4 @@
-#include "test.h"
+#include "exam.h"
 
 /*
 Since we are using math.h in this code,
@@ -24,7 +24,7 @@ int main(void){
     return 0;
 }
 
-Minutia* createMinutia(unsigned short x,unsigned short y,float angle,enum MinutiaType type){
+Minutia* createMinutia(unsigned short x,unsigned short y,float angle, MinutiaType type){
     Minutia* result = malloc(sizeof(Minutia));
     result->x = x;
     result->y = y;
@@ -110,13 +110,6 @@ int printMinutia(const Minutia* const minutia){
 }
 
 void releaseMinutiaArray(MinutiaArray* array){
-    // for(unsigned short i = array->length -1 ; i>0 ; i--){
-    //     // printMinutia(array->minutiae[i]);
-    //     free(array->minutiae[i]);
-    // }
-    // free(array->minutiae[0]);
-    // free(array->minutiae);
-    // free(array);
     free(array->minutiae);
     free(array);
 }

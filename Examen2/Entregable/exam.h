@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <math.h>
 
-enum MinutiaType {Ending,Bifurcation,Unknown};
+typedef enum {Ending,Bifurcation,Unknown} MinutiaType;
 
 #define RANDOM_NUMBER_LIMIT 100
-#define TEST_ARRAY_SIZE 150
+#define TEST_ARRAY_SIZE 15
 
 /**
  * Structure of a minutia
@@ -14,7 +14,7 @@ typedef struct{
     unsigned short x;
     unsigned short y;
     float angle;
-    enum MinutiaType type;
+    MinutiaType type;
 } Minutia;
 
 /**
@@ -22,13 +22,13 @@ typedef struct{
  */ 
 typedef struct {
     unsigned short length;
-    Minutia** minutiae;
+    Minutia* minutiae;
 } MinutiaArray;
 
 /**
  * Dynamically allocates a Minutia type pointer with the parameters passed.
  */
-Minutia* createMinutia(unsigned short x,unsigned short y,float angle,enum MinutiaType type);
+Minutia* createMinutia(unsigned short x,unsigned short y,float angle, MinutiaType type);
 
 /**
  * Dynamically allocates an Array of Minutia pointers with the size passed as a parameter
@@ -53,12 +53,6 @@ void releaseMinutiaArray(MinutiaArray* array);
 char compareMinutia(const Minutia* const minutiaA, const Minutia* const minutiaB);
 
 /**
- * The header of the function which after implementation will decide how to calculate the distance between 
- * two Minutia structures
- */
-double computeDistance(const Minutia* const ptrMA, const Minutia* const ptrMB);
-
-/**
  * Function which returns the pointer to a Minutia within the MinutiaArray -> array which using the function of computeDistance
  * will decide it's the relative center of the group of Minutia.
  */
@@ -67,4 +61,6 @@ Minutia* findCentroid(const MinutiaArray* const array, double (*computeDistance)
 /**
  * A function implemented to automatize if the function findCentroid is working properly.
  */
-char testFindCentroid();
+int testFindCentroid();
+
+double computeDistance(const Minutia* const ptrMA, const Minutia* const ptrMB);

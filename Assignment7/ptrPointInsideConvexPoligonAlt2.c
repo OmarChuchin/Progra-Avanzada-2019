@@ -3,6 +3,7 @@
 #include <math.h>
 
 #define dInfinity 0xFFFFFFFFFFFFFFFF
+#define PI 3.14159265
 
 typedef struct {
     int x;
@@ -117,38 +118,70 @@ double completeAngle(char section, double angle){
 }
 
 double radians(const Point* const a,const Point* const b){
-    double result = 0.0;
+    // double result = 0.0;
 
     double tanSlope = slope(a,b);
+    tanSlope = atan(tanSlope);
 
-    return atan(tanSlope); 
+    // char section = sector(a,b);
+
+    // result = completeAngle(section,tanSlope);
+
+    return tanSlope; 
+}
+
+double pointDistance(const Point* const a,const Point* const b){
+    double xAxis = a->x - b->x;
+    xAxis*=xAxis;
+    double yAxis = a->y - b->y;
+    yAxis*=yAxis;
+    return sqrt(xAxis + yAxis);
+}
+
+Point* closestPoint(const Point* const target, const Polygon* const polygon){
+    Point* result = polygon->points[0];
+    double distance = pointDistance(target,result);
+    for (unsigned short i = 1; i < polygon->pointCount; i++){
+        double tempDistance = pointDistance(target,polygon->points[i]);
+        if(tempDistance < distance){
+            result = polygon->points[i];
+            distance = tempDistance;
+        }
+    }
+    return result;
 }
 
 
 char isPointInsideConvexPolygon(const Polygon* const polygon,const Point* const target){
-    printPolygon(polygon);
-    printf("\n");
+    // printPolygon(polygon);
+    // printf("\n");
+    Point* closest = closestPoint(target,polygon);
+    // double top = 0.0, bottom = 0.0;
+    // char targetSector = sector(closestPoint,target);
+    double targetRadians = completeAngle(sector(closest,target),radians(closest,target));
     for(unsigned short i = 0; i < polygon->pointCount ; i++){
-        double top = 0.0, bottom = 0.0;
-        for(unsigned short j = 0; j < polygon->pointCount ; j++){
-            if(j!=i){
-                double temp = radians(polygon->points[i],polygon->points[j]);
-                if(temp>top){
-                    top = temp;
-                }
-                if(temp<bottom){
-                    bottom = temp;
+        char baseAngleSector = sector(closest,polygon->points[i]);
+        double baseAngleOriginal = radians(closest,polygon->points[i]);
+        double baseAngle = completeAngle(baseAngleSector,baseAngleOriginal);
+        for (unsigned short j = 0; j < polygon->pointCount; j++){
+            char topAngleSector = sector(closest,polygon->points[j]);
+            double topAngleOriginal = radians(closest,polygon->points[j]);
+            double topAngle = completeAngle(topAngleSector,topAngleOriginal);
+            if(baseAngle<targetRadians && targetRadians<topAngle){
+                if((topAngle-baseAngle)<=18.00){
+                    return 1;
                 }
             }
         }
-        double targetRadians = radians(polygon->points[i],target);
-        printPoint(polygon->points[i]);
-        printf("top = %.2f\ntarget = %.2f\nbottom = %.2f\n",top,targetRadians,bottom);
-        if(targetRadians>top || targetRadians<bottom){
-            return 0;
-        }
+        
+        
     }
-    return 1;
+    // printPoint(polygon->points[i]);
+    // printf("top = %.2f\ntarget = %.2f\nbottom = %.2f\n",top,targetRadians,bottom);
+    // if(targetRadians>top || targetRadians<bottom){
+    //     return 0;
+    // }
+    return 0;
 }
 
 void freePolygon(Polygon* const polygon){
